@@ -1,0 +1,24 @@
+- name: Configure Database Server
+  hosts: db_server
+  tasks:
+    - name: Install MongoDB
+      apt:
+        name: mongodb
+        state: present
+
+    - name: Start MongoDB service
+      service:
+        name: mongodb
+        state: started
+        enabled: true
+
+    - name: Create MongoDB user and database
+      shell: |
+        mongo <<EOF
+        use travelmemory
+        db.createUser({
+          user: 'mern_user',
+          pwd: 'securepassword',
+          roles: [{ role: 'readWrite', db: 'travelmemory' }]
+        });
+        EOF

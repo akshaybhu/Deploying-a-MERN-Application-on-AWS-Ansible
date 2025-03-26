@@ -1,0 +1,15 @@
+- name: Deploy MERN Application
+  hosts: web_server
+  tasks:
+    - name: Set environment variables
+      lineinfile:
+        path: /var/www/TravelMemory/backend/.env
+        line: "{{ item }}"
+      loop:
+        - "MONGO_URI=mongodb://mern_user:securepassword@db_server:27017/travelmemory"
+        - "PORT=3001"
+
+    - name: Start the application
+      shell: |
+        cd /var/www/TravelMemory/backend
+        node index.js &

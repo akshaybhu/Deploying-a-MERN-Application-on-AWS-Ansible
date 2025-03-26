@@ -1,0 +1,13 @@
+- name: Harden Security
+  hosts: all
+  tasks:
+    - name: Disable root login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+
+    - name: Restart SSH service
+      service:
+        name: ssh
+        state: restarted
