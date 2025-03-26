@@ -1,0 +1,35 @@
+- name: Configure Web Server
+  hosts: web_server
+  tasks:
+    - name: Update APT packages
+      apt:
+        update_cache: yes
+
+    - name: Install Node.js and NPM
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nodejs
+        - npm
+
+    - name: Clone TravelMemory repo
+      git:
+        repo: https://github.com/UnpredictablePrashant/TravelMemory
+        dest: /var/www/TravelMemory
+
+    - name: Install backend dependencies
+      command: npm install
+      args:
+        chdir: /var/www/TravelMemory/backend
+
+    - name: Configure Nginx
+      copy:
+        src: nginx-config.conf
+        dest: /etc/nginx/sites-available/custom_server.conf
+    - name: Enable Nginx Config
+      command: ln -s /etc/nginx/sites-available/custom_server.conf /etc/nginx/sites-enabled/
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
